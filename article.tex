@@ -35,7 +35,6 @@
 \author{Lam, Peterson, Schnall
 \skiplinehalf
 Harvard University \\
-CS 108 \\
 Professor Barbara Grosz \\
 December 12, 2016
 }
@@ -61,7 +60,7 @@ December 12, 2016
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{abstract}
 
-Advances in modern medicine have enabled health care to become increasingly precise. This holds promise for patients, however, the increase in the number of possible treatment options can make it difficult for physicians to decide on the best for a particular patient. Developing a treatment recommender system could assist physicians in this task, but due to the high-stakes nature of health care, it is imperative that medical ethics be integrated into its design. After an overview of medical ethics, in this paper, three key design features are investigated – (1) the selection of reinforcement as a learning algorithm, (2) the exploration / exploitation ratio and reward function design, and (3) how recommendations are presented and whether patients should be allowed to opt out of suggestions. Ultimately, ethical design suggests the development of a system that uses batch reinforcement learning with some exploration, a reward function that seeks to maximize a compound quality measure, and allows for patients to opt-out of suggestions. Possible future work could include the development of a treatment recommender system in a lower-risk health care domain (such as in primary care) and optimizing the design before moving to higher-risk domains such as oncology. Due to the incredibly complex nature of health care, treatment recommender systems are likely many years from being completely functional and because of the risks inherent in treating patients, and even if implemented, will require physician oversight for the foreseeable future.
+Advances in modern medicine have enabled health care to become increasingly precise. This holds promise for patients, however, the increase in the number of possible treatment options can make it difficult for physicians to decide on the best for a particular patient. Developing a treatment recommender system could assist physicians in this task, but due to the high-stakes nature of health care, it is imperative that medical ethics be integrated into its design. After an overview of medical ethics, in this paper, three key design features are investigated -- (1) the selection of reinforcement as a learning algorithm, (2) the exploration / exploitation ratio and reward function design, and (3) how recommendations are presented and whether patients should be allowed to opt out of suggestions. Ultimately, ethical design suggests the development of a system that uses batch reinforcement learning with some exploration, a reward function that seeks to maximize a compound quality measure, and allows for patients to opt-out of suggestions. Possible future work could include the development of a treatment recommender system in a lower-risk health care domain (such as in primary care) and optimizing the design before moving to higher-risk domains such as oncology. Due to the incredibly complex nature of health care, treatment recommender systems are likely many years from being completely functional and because of the risks inherent in treating patients, and even if implemented, will require physician oversight for the foreseeable future.
 \end{abstract}
 
 %>>>> Include a list of keywords after the abstract
@@ -74,22 +73,22 @@ Advances in modern medicine have enabled health care to become increasingly prec
 
 Advances in modern medicine have dramatically improved the health of people worldwide. Life expectancy at birth, a base metric for the health of a society, has increased by approximately 10 years from 1950 and 2007 for both men and women born in the United States (Crimmins, 2011). Outside of life expectancy, people alive today experience greater overall health status as some diseases, such as polio, have been nearly eliminated, while others, like HIV/AIDS, have found better methods of chronic management. These advances in health can be contributed to a combination of complex and interacting factors including social welfare programs; access to better nutrition, vaccination, and public health campaigns; and improvements in medicine not limited to more effective treatment options and increased understanding of disease management.
 
-In the field of oncology, or cancer treatment, there has been a shift towards continually more precise medicine. Beginning with more blunt treatments like radical surgery and general systemic chemotherapy which indiscriminately kill both normal and cancerous cells, cancer therapies have transitioned to complex, targeted treatments designed to only eliminate cancerous cells, reducing the negative impacts of treatment on the patient. One such example is that of PD-L1 inhibitors, which are complex molecules that help the patient’s own immune system find and eliminate cancerous cells that were previously hidden to the immune system (Brahmer, 2012). Advances in diagnostic capabilities, not limited to biomarker testing and personalized genomics, have helped uncovered new targets that pharmaceutical agents can act on, simultaneously increasing effectiveness and safety. However, as the targets of these treatments become increasingly refined, they also work in fewer and fewer patients, as not every patient will have a cancer with the specific abnormalities that a highly targeted treatment can take advantage of. As the number of treatments available to use is constantly increasing – there were 771 oncology specific drugs in R\&D in 2015 – the number of different combinations of treatments and the order in which they can be given is rapidly growing (Buffery, 2015).
+In the field of oncology, or cancer treatment, there has been a shift towards continually more precise medicine. Beginning with more blunt treatments like radical surgery and general systemic chemotherapy which indiscriminately kill both normal and cancerous cells, cancer therapies have transitioned to complex, targeted treatments designed to only eliminate cancerous cells, reducing the negative impacts of treatment on the patient. One such example is that of PD-L1 inhibitors, which are complex molecules that help the patient’s own immune system find and eliminate cancerous cells that were previously hidden to the immune system (Brahmer, 2012). Advances in diagnostic capabilities, not limited to biomarker testing and personalized genomics, have helped uncovered new targets that pharmaceutical agents can act on, simultaneously increasing effectiveness and safety. However, as the targets of these treatments become increasingly refined, they also work in fewer and fewer patients, as not every patient will have a cancer with the specific abnormalities that a highly targeted treatment can take advantage of. As the number of treatments available to use is constantly increasing -- there were 771 oncology specific drugs in R\&D in 2015 -- the number of different combinations of treatments and the order in which they can be given is rapidly growing (Buffery, 2015).
 
 While this rapid increase in highly targeted treatment options and diagnostic capabilities has presented potentially dramatic improvements in patient outcomes, it also has made sifting through a patient’s clinical data and then reviewing medical literature to pick an appropriate, let alone maximally-effective, treatment plan increasingly difficult for physicians. To help compensate for this, doctors are generally supposed to follow clinical guidelines put out by experts in specific disease areas, such as the National Comprehensive Cancer Network’s Clinical Practice Guidelines in Oncology. These guidelines, which often are presented in the format of a decision tree, can be useful for determining what care to deliver to patients. However, they are sometimes not available for rare disorders and are not updated as frequently as new treatment options are made available. Additionally, despite the existence of certain clear guidelines, such as performing surgery on patients with operable stage I or II breast cancer, a 2003 study showed that only 55\% of patients in the United States receive recommended care (McGlynn, 2003). While this might raise questions of undertreatment, studies show that nearly one third of all clinical Medicare spending, a sum of approximately 650 billion dollars (equivalent to the entire budget for K-12 education), was wasteful and could be avoided without negatively affecting health outcomes (Skinner, 2005). It therefore appears that the provision of treatment guidelines is not sufficient to ensure that patients are receiving optimal care. Given the large degree of wasteful medical practice, lack of provision of standard care, and the inherent difficulties of deciding on an appropriate treatment plan for patients in a timely manner, it is highly important that physicians are provided with better tools for improving the care that they deliver.
 
-One way to do accomplish this would be the development of a treatment recommender system that offers physicians real-time decision support. At a high level, such a system would have an understanding of a given patient – from what disease they have and their age to potentially more granular details like what specific base-pairs are mutated in their DNA – and how other patients with similar characteristics have responded to different therapies. Then it would use these data to help recommend treatments that are likely to be effective for the patient. These systems could build their recommendations on data derived from Electronic Health Records (EHRs), which store data on patient characteristics and treatment administrations as well as other useful data, such as physician notes on how a patient feels and what side-effects they may be experiencing with their treatment. After training on baseline data, such a recommender system could also be capable of learning over time, taking into account how its recommendations affected a patient’s health, allowing it to ultimately improve what treatments it recommends for similar patients in the future. Akin to physicians performing clinical trials to learn which patients a new drug might be effective in, such a system would need to explore to try to improve. For instance, if a new treatment option became available, the system would need to recommend this option a few times to different patients to learn how well and in what patients it might work. In medicine, unlike in other domains, however, a bad recommendation could result in the avoidable death of a patient. It is important to note that a physician should always have the final decision in what care to give to a patient, being certain to take a patient’s desires into account. These systems are only meant to assist physicians, however, the mere suggestion of a particular treatment might affect a physician's decision, and so, given these high stakes, it is important that the design of a treatment recommender system be thoroughly considered and guided through concepts found in medical ethics.
+One way to do accomplish this would be the development of a treatment recommender system that offers physicians real-time decision support. At a high level, such a system would have an understanding of a given patient -- from what disease they have and their age to potentially more granular details like what specific base-pairs are mutated in their DNA -- and how other patients with similar characteristics have responded to different therapies. Then it would use these data to help recommend treatments that are likely to be effective for the patient. These systems could build their recommendations on data derived from Electronic Health Records (EHRs), which store data on patient characteristics and treatment administrations as well as other useful data, such as physician notes on how a patient feels and what side-effects they may be experiencing with their treatment. After training on baseline data, such a recommender system could also be capable of learning over time, taking into account how its recommendations affected a patient’s health, allowing it to ultimately improve what treatments it recommends for similar patients in the future. Akin to physicians performing clinical trials to learn which patients a new drug might be effective in, such a system would need to explore to try to improve. For instance, if a new treatment option became available, the system would need to recommend this option a few times to different patients to learn how well and in what patients it might work. In medicine, unlike in other domains, however, a bad recommendation could result in the avoidable death of a patient. It is important to note that a physician should always have the final decision in what care to give to a patient, being certain to take a patient’s desires into account. These systems are only meant to assist physicians, however, the mere suggestion of a particular treatment might affect a physician's decision, and so, given these high stakes, it is important that the design of a treatment recommender system be thoroughly considered and guided through concepts found in medical ethics.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Guiding Ethical Principles}
 
 Although no code of medical ethics was documented before the 5th century B.C.E. at the earliest estimate, humans have been practicing some forms of medicine since the stone age (Dorfner, 1999), and a concept of ethics has been inherent in that practice since it began. Medical practice, from prehistoric medicine men to modern pharmacology and surgery, can be understood broadly as attempting to prevent or lessen the harm, suffering or illness individuals experience. The concept that mental and bodily harm should be minimized is in itself an ethical principle, and thus medicine is an inherently ethical discipline.
 
-Historically, Western medical ethics has been understood through sets of codified rules. Contemporary conceptions of medical ethics generally rest on the four prima facie principles of respect for autonomy, beneficence, non-maleficence, and justice (Gillon, 1994). There is no single agreed-upon protocol for handling particular medical situations. Instead, medical ethics prescribes that practitioners and other ethically interested parties ought to understand ethical conflicts in medicine through these principles, and reason among them in the context of the particular situation. Gillon notes that these principles denote prima facie obligations; they are obligations, but in the face of a more pressing duty – perhaps a duty brought by one of the other principles – they may be diminished.
+Historically, Western medical ethics has been understood through sets of codified rules. Contemporary conceptions of medical ethics generally rest on the four prima facie principles of respect for autonomy, beneficence, non-maleficence, and justice (Gillon, 1994). There is no single agreed-upon protocol for handling particular medical situations. Instead, medical ethics prescribes that practitioners and other ethically interested parties ought to understand ethical conflicts in medicine through these principles, and reason among them in the context of the particular situation. Gillon notes that these principles denote prima facie obligations; they are obligations, but in the face of a more pressing duty -- perhaps a duty brought by one of the other principles -- they may be diminished.
 
 The decision process encouraged by such a code of ethics aligns most closely with rule consequentialism. Where act consequentialism holds that an act is good if its consequences maximize good, rule consequentialism holds that an act is good if it is in accordance with an agreed-upon code of rules; the rules are selected for their capacity to maximize good consequences. Rule consequentialism is not designed necessarily to maximize the good, but to provide a theory to resolve moral disagreements and uncertainties (Hooker, 2000). The four principles of medical ethics should each be met as completely as possible. When the four come into conflict, though, it will sometimes be necessary to leave parts of some principles unmet.
 
-The principle of respect for autonomy concerns the individual’s right to deliberated self rule. Individuals should be able to make decisions regarding the course of their own lives. A primary implication in health care of this principle is the obligation to seek and obtain individuals’ informed consent concerning their treatment. Patients should not be deceived as to what their treatment entails, or coerced into treatment that they do not wish to endure. In the context of medical research, patients should be informed as to the possible risks and benefits of the treatment being tested, and should be informed as to whether the trial is a randomized trial – that is, whether they are actually guaranteed to be receiving the treatment they are expecting to receive, or whether they might instead receive an alternative treatment or placebo.
+The principle of respect for autonomy concerns the individual’s right to deliberated self rule. Individuals should be able to make decisions regarding the course of their own lives. A primary implication in health care of this principle is the obligation to seek and obtain individuals’ informed consent concerning their treatment. Patients should not be deceived as to what their treatment entails, or coerced into treatment that they do not wish to endure. In the context of medical research, patients should be informed as to the possible risks and benefits of the treatment being tested, and should be informed as to whether the trial is a randomized trial -- that is, whether they are actually guaranteed to be receiving the treatment they are expecting to receive, or whether they might instead receive an alternative treatment or placebo.
 
 Gillon argues that the principle of respect for autonomy can also be understood through the Humanity Formulation of Kant’s Categorical Imperative. The Humanity Formula states that we should never act so as to treat humanity as merely a means to an end; humanity should be treated as an end in itself (Johnson \& Cureton, 2008). An implication for clinical research is that individuals ought not to be enrolled in clinical studies that pose no benefit to humanity; this is, importantly, distinct from a proposal that individuals ought only to be enrolled in studies that propose a direct benefit to the individual. There are ethical formulations in clinical research that allow for enrollment in studies that pose to benefit to the individual, but do pose a benefit to society or humanity at a wider level.
 
@@ -150,7 +149,7 @@ One framework that appears both technically and ethically promising is referred 
 
 A reinforcement learning agent that incorporates past medical data into its initial recommendations reduces the amount of potential harm to patients. A reinforcement-learning system that begins with no understanding of any treatment and their effect on patient health may eventually develop strong and optimal recommendations, but would begin making recommendations without any knowledge. In the field of medicine, the potential risks would be far too high. No practice would employ a human physician with zero training; the possibility that an untrained physician might cause great physical harm is the foundation of the global medical education system.
 
-By employing batch reinforcement learning, the system could avoid recommending treatments that have already been proven to have negative or little value. For example, phase I clinical trials attempt to seek the optimal dosing for a particular drug, oftentimes incrementally raising doses until toxicities appear (Le Tourneau, 2009). Batch reinforcement learning could allow for more accurate dosage suggestions from the start, whereas a reinforcement learning system with no initial seeding might suggest trying a potentially toxic dose that could be avoided. If a physician permitted this dose, perhaps by not noticing the suggestion was in grams instead of milligrams, the system would have contributed in violating aforementioned principle of nonmaleficence. To not employ a learning agent that suggests more optimal treatments earlier and faster is less ethically permissible than to do so.
+By employing batch reinforcement learning, the system could avoid recommending treatments that have already been proven to have negative or little value. For example, phase I clinical trials attempt to seek the optimal dosing for a particular drug, oftentimes incrementally raising doses until toxicities appear (Le Tourneau, 2009). Batch reinforcement learning could allow for more accurate dosage suggestions from the start, whereas a reinforcement learning system with no initial seeding might suggest trying a potentially toxic dose that could be avoided. If a physician permitted this dose, perhaps by not noticing the suggestion was in grams instead of milligrams, the system would have contributed in violating aforementioned principle of non-maleficence. To not employ a learning agent that suggests more optimal treatments earlier and faster is less ethically permissible than to do so.
 
 Another reason to use reinforcement learning for the system’s learning modality is due to the fact that these algorithms are often more intuitive, especially for clinicians. Reinforcement learning has a more cause-and-effect-esque method of learning. Clinicians learn to provide care by learning from how previous decisions affected outcomes and then doing what had the best outcome, either through personal experience or clinical trials. This similarity to reinforcement learning might help physicians better understand how the system came to a suggestion thereby improving their trust in the system and potentially increase their chances of understanding how a bad suggestion came about.
 
@@ -169,9 +168,9 @@ One of the key challenges that arises in reinforcement learning is the tradeoff 
 
 In the medical domain, application of a reinforcement learning system implies a model where current patients can be exposed to risk for the purpose of determining the efficacy of a treatment process that might serve more patients in the future. The discount factor essentially determines at what scope the principle of beneficence will be applied. Selecting for a discount factor close to one, an agent would favor minute improvements for many future patients over even drastic outcomes for current patients, such as death (Tenenbaum et al., 2010). Conversely, by selecting for a discount factor close to zero, an agent would be extremely slow to improve, if at all, compromising optimal results for future patients but would suggest the best care it presently knows to a current patient.
 
-The value of the discount factor ultimately affects what care the system delivers over both the long and short-term. Maximizing care for current patients might seem to be the best option with respect to non-maleficence, but the possibility of providing better care to future patients through exposing some of today’s patients to some risk might generate more net health in the long-term. This ethical conflict is analogous to the conflicts faced in designing clinical trials today. While clinical research is generally considered a necessary part of the biomedical system – it is very difficult for doctors to claim to provide best care without any way of evaluating different care protocols and determining which are, in fact, the most beneficial (Gillon, 1994) – individual patients enrolled in clinical trials may not face the best outcomes available to them. It is important in designing clinical trials to ensure that the standards laid out by Freedman (1987) are met. A trial should only be conducted when there is genuine uncertainty as to the relative benefits of the treatment options being evaluated.
+The value of the discount factor ultimately affects what care the system delivers over both the long and short-term. Maximizing care for current patients might seem to be the best option with respect to non-maleficence, but the possibility of providing better care to future patients through exposing some of today’s patients to some risk might generate more net health in the long-term. This ethical conflict is analogous to the conflicts faced in designing clinical trials today. While clinical research is generally considered a necessary part of the biomedical system -- it is very difficult for doctors to claim to provide best care without any way of evaluating different care protocols and determining which are, in fact, the most beneficial (Gillon, 1994) -- individual patients enrolled in clinical trials may not face the best outcomes available to them. It is important in designing clinical trials to ensure that the standards laid out by Freedman (1987) are met. A trial should only be conducted when there is genuine uncertainty as to the relative benefits of the treatment options being evaluated.
 
-Thus, from the standpoint of the ethical principles laid out above, a reinforcement learning agent should not include options in its consideration that are considered to be clearly worse for patients. It should explore new treatment options only when there is a genuine possibility that the new options will be as beneficial or more beneficial to the patient that proven treatments. There is, however, an obligation to explore, given that those concerns are met, for without exploration of potential treatments – and without clinical trials of promising new medications and surgeries – treatment quality will stagnate, and the medical system will be failing as a whole to provide best care.
+Thus, from the standpoint of the ethical principles laid out above, a reinforcement learning agent should not include options in its consideration that are considered to be clearly worse for patients. It should explore new treatment options only when there is a genuine possibility that the new options will be as beneficial or more beneficial to the patient that proven treatments. There is, however, an obligation to explore, given that those concerns are met, for without exploration of potential treatments -- and without clinical trials of promising new medications and surgeries -- treatment quality will stagnate, and the medical system will be failing as a whole to provide best care.
 
 An ideal agent will administer optimal or near optimal (above a certain threshold) treatments for patients, but also take calculated opportunities to explore the treatment space to determine more effective treatment pathways. Thus, a reinforcement learning agent must be able to induce an effective mapping from states to actions to be taken (Sutton, 1998): for example, the system must correctly provide erlotinib to patients with EGFR+ non-small-cell lung cancer). As in batch reinforcement learning, this policy must be based on and incorporate past data and literature and draw on statistical models. While there have been a number of successful real-world cases using batch reinforcement learning (Lange, 2012), Tenenbaum et al. (2010) note that there has been limited work on the use of batch reinforcement learning on clinical data. As such, there remain many questions and challenges that will need to be addressed.
 
@@ -211,14 +210,14 @@ While other design decisions exist and will eventually need to be investigated b
 
 Recommendations should be presented in such a way that the amount of information presented to the physician is maximized. The recommender system’s algorithm can be thought of in itself as a kind of low-risk research, for it results in statistical information about the viability and effectiveness of treatment options for a given patient. In order for the principles of beneficence and nonmaleficence to be upheld, the physician should be provided with enough information to make an effective decision as to how to treat her patient.
 
-Thus, the way that recommendations are ultimately presented to the physician has great significance for the ethical status of the system. How many options are ultimately presented to the physician – is a single treatment recommended, with little information about how or why the system arrived at that decision, or is a ranked list of treatment options presented? Does the system select one option as the best option, taking all variables into account, or does it present one option that has the lowest risk, one that has the greatest chance of success, and one that will be the least expensive financially and emotionally to the institution and to the patient?
+Thus, the way that recommendations are ultimately presented to the physician has great significance for the ethical status of the system. How many options are ultimately presented to the physician -- is a single treatment recommended, with little information about how or why the system arrived at that decision, or is a ranked list of treatment options presented? Does the system select one option as the best option, taking all variables into account, or does it present one option that has the lowest risk, one that has the greatest chance of success, and one that will be the least expensive financially and emotionally to the institution and to the patient?
 
 %%-----------------------------------------------------------
 \subsection{Lying Recommender Systems}
 
 In some recommender systems, lying is a key design feature. Like a recommender that would guide the user through a list of stores at which to shop for a computer by presenting information about price ranges of computers at each store, but lie about the probability of a computer being a very low price in order to influence the user to shop at that particular store, a treatment recommender could lie about or conceal information about a given treatment in order to influence the physician to take the course of action that the system found statistically to be most beneficial.
 
-Though a lying recommender system might indeed be able to convince users to follow the most statistically beneficial course of treatment, medical ethics would not allow for any system that provided false information to the physician. This would be an infringement of both the physician’s ability to uphold the principle of beneficence – perhaps the suggested treatment would have side effects that the physician is aware would have a particularly negative effect on the patient – and the physician’s ability to respect the patient’s autonomy. The patient’s autonomy in choosing and consenting to his treatment is dependent upon his understanding of the treatment options available. If he is not given complete information or is given false information, the physician is in effect acting coercively, and the patient’s decisions can no longer be autonomous.
+Though a lying recommender system might indeed be able to convince users to follow the most statistically beneficial course of treatment, medical ethics would not allow for any system that provided false information to the physician. This would be an infringement of both the physician’s ability to uphold the principle of beneficence -- perhaps the suggested treatment would have side effects that the physician is aware would have a particularly negative effect on the patient -- and the physician’s ability to respect the patient’s autonomy. The patient’s autonomy in choosing and consenting to his treatment is dependent upon his understanding of the treatment options available. If he is not given complete information or is given false information, the physician is in effect acting coercively, and the patient’s decisions can no longer be autonomous.
 
 This would be a serious violation of medical ethics. There is certainly a broad precedent in medicine of deceiving patients in order to meet the principle of beneficence. However, this deception is only allowed when the patient has failed to meet a standard of competence. If a patient is not able to competently make decisions, the argument holds, his autonomy is impossible in any regard, and so the principle of beneficence should be upheld over all (Gillon, 1994). In any context in which the patient is indeed competent and would be granted the respect to consent to his treatment, he should not be deceived.
 
@@ -236,7 +235,7 @@ A particular treatment option might have a higher rate of success, for example, 
 
 An important consideration is whether or not the physician should be allowed to opt out of the treatment(s) recommended by the system and instead follow an alternative course of treatment. The scope of interpretation of the principles of beneficence is at question here, as it is the the standard course of prescription of treatment by human physicians.
 
-If applied at the level of the patient, the physician should disregard the recommendation made by the system – or choose among the recommendations made – if the physician knows with certainty that one treatment will leave the patient worse off. This might mean opting out of a slightly less effective treatment that would teach the system far more, and allow it to make better recommendations for future patients. At the level of the community of physicians using this recommender system, then, the physician should heed the recommendation made by the system: this would provide the system with a learning opportunity and the chance to modify and improve its diagnostic ability for the benefit of future patients (and, potentially, for future treatment of the same patient).
+If applied at the level of the patient, the physician should disregard the recommendation made by the system -- or choose among the recommendations made -- if the physician knows with certainty that one treatment will leave the patient worse off. This might mean opting out of a slightly less effective treatment that would teach the system far more, and allow it to make better recommendations for future patients. At the level of the community of physicians using this recommender system, then, the physician should heed the recommendation made by the system: this would provide the system with a learning opportunity and the chance to modify and improve its diagnostic ability for the benefit of future patients (and, potentially, for future treatment of the same patient).
 
 A clear analogy can be drawn to the tension between a physician recommending that a patient enroll in a clinical trial when she has a compelling belief that one treatment option is better than the other. If no one were to enroll in clinical trials, there would be no way to advance knowledge of better treatment and quality of care would be static indefinitely. If some physicians and patients are willing to assume minimal risk, the benefits to the system are large.
 
@@ -266,7 +265,7 @@ Global Cumulative Treatment Analysis (Shrager \& Tenenbaum, 2014).
 
 %-------------
 
-A system that offers several ranked options to the patient and makes clear both which ones are statistically likely to be superior and the decision process by which it arrived at those conclusions would allow the physician can evaluate recommendations in the context of the individual patient and the practice. This would be an ideal system to meet the ethical demands of medical practice.
+A system that offers several ranked options to the patient and makes clear both which ones are statistically likely to be superior and the decision process by which it arrived at those conclusions would allow the physician to evaluate recommendations in the context of the individual patient and the practice. This would be an ideal system to meet the ethical demands of medical practice.
 
 For the present moment, a system that does not offer a ranked list of options but instead provides only one recommendation will still be a highly useful decision-making tool. The recommendation may provide valuable insight to the prescribing physician, especially if she is trained as to the decision-making calculus used by the system and is able to draw her own conclusions from its recommendation. However, for the system to be ethically permissible, the physician must be allowed to opt out of the recommendation made and, indeed, encouraged to do so when prevailing factors indicate that an alternative course of treatment would maximize the good in a particular instance. This will not give the system as great an opportunity to learn, but will ensure that the right to autonomy and the standard of beneficence are upheld.
 
@@ -284,6 +283,8 @@ While many other design considerations are present and will require future inves
 
 Developing a treatment recommender system that provides strong treatment recommendations founded in clinical data and ethical design will require considerable future work. The data on which such a system operates will need to be improved. Currently EHR data is often left incomplete and does not capture all meaningful data for basing a recommendation. Efforts in data cleaning and aggregation, as well as increased data sharing across care providing facilities would improve this problem, allowing a system to learn better. Additional research will need to be done on how such a system would work in a clinical setting in real-time, and extensive effort would need to be put into testing and optimizing the reward functions and exploration-exploitation ratios that systems use. Moving into new diseases spaces will require different models, and dealing with co-morbidities (e.g. having cancer and diabetes) will present unique challenges. As more is learned about various diseases, models may need to be radically revised to ensure that the best care possible is provided to patients. Lastly, significant work needs to be done to make sure a recommender system is able to explain to doctors how it came to its result. Without this, such a system does not provide much value to a physician as it would either only confirm an already thought of course of treatment or confuse a physician with its output. Overall, the design of a system that functions well in health care treatment recommendations should be pursued due to the potentially immense benefits it could have on individuals and society.
 
+\clearpage
+
 \appendix
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -292,123 +293,123 @@ Developing a treatment recommender system that provides strong treatment recomme
 \bibliography{report}   %>>>> bibliography data in report.bib
 \bibliographystyle{spiebib}   %>>>> makes bibtex use spiebib.bst
 
-\noindent[1] Brahmer, J. R., Tykodi, S. S., Chow, L. Q., Hwu, W. J., Topalian, S. L., Hwu, P., ... & Pitot, H. C. (2012). Safety and activity of anti PD-L1 antibody in patients with advanced cancer. New England Journal of Medicine, 366(26), 2455-2465.
+\indent Brahmer, J. R., Tykodi, S. S., Chow, L. Q., Hwu, W. J., Topalian, S. L., Hwu, P., ... & Pitot, H. C. (2012). Safety and activity of anti PD-L1 antibody in patients with advanced cancer. New England Journal of Medicine, 366(26), 2455-2465.
 
 \skiplinehalf
 
-\noindent[2] Buffery, D. (2015). The 2015 oncology drug pipeline: innovation drives the race to cure cancer. American health & drug benefits, 8(4), 216.
+\indent Buffery, D. (2015). The 2015 oncology drug pipeline: innovation drives the race to cure cancer. American health & drug benefits, 8(4), 216.
 
 \skiplinehalf
 
-\noindent [3] Caplan, A. L. (1984). Is there a duty to serve as a subject in biomedical research?. IRB: Ethics & Human Research, 6(5), 1-5.
+\indent Caplan, A. L. (1984). Is there a duty to serve as a subject in biomedical research?. IRB: Ethics & Human Research, 6(5), 1-5.
 
 \skiplinehalf
 
-\noindent [4] Caruana, R., Lou, Y., Gehrke, J., Koch, P., Sturm, M., & Elhadad, N. (2015, August). Intelligible models for healthcare: Predicting pneumonia risk and hospital 30-day readmission. In Proceedings of the 21th ACM SIGKDD International Conference on Knowledge Discovery and Data Mining (pp. 1721-1730). ACM.
+\indent Caruana, R., Lou, Y., Gehrke, J., Koch, P., Sturm, M., & Elhadad, N. (2015, August). Intelligible models for healthcare: Predicting pneumonia risk and hospital 30-day readmission. In Proceedings of the 21th ACM SIGKDD International Conference on Knowledge Discovery and Data Mining (pp. 1721-1730). ACM.
 
 \skiplinehalf
 
-\noindent [5] Crimmins, E. M., Preston, S. H., & Cohen, B. (Eds.). (2011). Explaining divergent levels of longevity in high-income countries. National Academies Press.
+\indent Crimmins, E. M., Preston, S. H., & Cohen, B. (Eds.). (2011). Explaining divergent levels of longevity in high-income countries. National Academies Press.
 
 \skiplinehalf
 
-\noindent [6] Dorfer, L., Moser, M., Bahr, F., Spindler, K., Egarter-Vigl, E., Giullen, S., & Kenner, T. (1999). A medical report from the stone age?. The Lancet, 354(9183), 1023-1025.
+\indent Dorfer, L., Moser, M., Bahr, F., Spindler, K., Egarter-Vigl, E., Giullen, S., & Kenner, T. (1999). A medical report from the stone age?. The Lancet, 354(9183), 1023-1025.
 
 \skiplinehalf
 
-\noindent [7] Ernst, D., Geurts, P., & Wehenkel, L. (2005). Tree-based batch mode reinforcement learning. Journal of Machine Learning Research, 6(Apr), 503-556.
+\indent Ernst, D., Geurts, P., & Wehenkel, L. (2005). Tree-based batch mode reinforcement learning. Journal of Machine Learning Research, 6(Apr), 503-556.
 
 \skiplinehalf
 
-\noindent [8] Faden, R. R., Kass, N. E., Goodman, S. N., Pronovost, P., Tunis, S., & Beauchamp, T. L. (2013). An ethics framework for a learning health care system: a departure from traditional research ethics and clinical ethics. Hastings Center Report, 43(s1), S16-S27.
+\indent Faden, R. R., Kass, N. E., Goodman, S. N., Pronovost, P., Tunis, S., & Beauchamp, T. L. (2013). An ethics framework for a learning health care system: a departure from traditional research ethics and clinical ethics. Hastings Center Report, 43(s1), S16-S27.
 
 \skiplinehalf
 
-\noindent [9] Faust, A. (2012). Reinforcement Learning as a Motion Planner-A Survey. Technical report, University of New Mexico, Department of Computer Science, 2012. [Online: http://www.cs.unm.edu/ pdevineni/papers/Faust.pdf].
+\indent Faust, A. (2012). Reinforcement Learning as a Motion Planner-A Survey. Technical report, University of New Mexico, Department of Computer Science, 2012. [Online: http://www.cs.unm.edu/ pdevineni/papers/Faust.pdf].
 
 
 \skiplinehalf
 
-\noindent [10] Freedman, B. (1987). Equipoise and the ethics of clinical research. N Engl J Med, 317(3), 141-145.
+\indent Freedman, B. (1987). Equipoise and the ethics of clinical research. N Engl J Med, 317(3), 141-145.
 
 \skiplinehalf
 
-\noindent [11] Gillon, R. (1994). Medical ethics: four principles plus attention to scope. Bmj, 309(6948), 184.
+\indent Gillon, R. (1994). Medical ethics: four principles plus attention to scope. Bmj, 309(6948), 184.
 
 \skiplinehalf
 
-\noindent [12] Hooker, B. (2000). Ideal code, real world: A rule-consequentialist theory of morality. Oxford University Press.
+\indent Hooker, B. (2000). Ideal code, real world: A rule-consequentialist theory of morality. Oxford University Press.
 
 \skiplinehalf
 
-\noindent [13] Hume, D. (2010). Of suicide. Life, Death, and Meaning: Key Philosophical Readings on the Big Questions, 291.
+\indent Hume, D. (2010). Of suicide. Life, Death, and Meaning: Key Philosophical Readings on the Big Questions, 291.
 
 \skiplinehalf
 
-\noindent [14] Johnson, R. (2008). Kant's moral philosophy. Stanford encyclopedia of philosophy.
+\indent Johnson, R. (2008). Kant's moral philosophy. Stanford encyclopedia of philosophy.
 
 \skiplinehalf
 
-\noindent [15] Kocsis, L., & Szepesvári, C. (2006, September). Bandit based monte-carlo planning. In European conference on machine learning (pp. 282-293). Springer Berlin Heidelberg.
+\indent Kocsis, L., & Szepesvári, C. (2006, September). Bandit based monte-carlo planning. In European conference on machine learning (pp. 282-293). Springer Berlin Heidelberg.
 
 \skiplinehalf
 
-\noindent [16] Lagoudakis, M. G., & Parr, R. (2003). Least-squares policy iteration. Journal of Machine Learning Research, 4(Dec), 1107-1149.
+\indent Lagoudakis, M. G., & Parr, R. (2003). Least-squares policy iteration. Journal of Machine Learning Research, 4(Dec), 1107-1149.
 
 \skiplinehalf
 
-\noindent [17] Lange, S., Gabel, T., & Riedmiller, M. (2012). Batch reinforcement learning. InReinforcement learning (pp. 45-73). Springer Berlin Heidelberg.
+\indent Lange, S., Gabel, T., & Riedmiller, M. (2012). Batch reinforcement learning. InReinforcement learning (pp. 45-73). Springer Berlin Heidelberg.
 
 \skiplinehalf
 
-\noindent [18] Le Tourneau, C., Lee, J. J., & Siu, L. L. (2009). Dose escalation methods in phase I cancer clinical trials. Journal of the National Cancer Institute.
+\indent Le Tourneau, C., Lee, J. J., & Siu, L. L. (2009). Dose escalation methods in phase I cancer clinical trials. Journal of the National Cancer Institute.
 
 \skiplinehalf
 
-\noindent [19] Lizotte, D. J., Gunter, L., Laber, E., & Murphy, S. A. (2008). Missing data and uncertainty in batch reinforcement learning. In Neural Information Processing Systems (NIPS).
+\indent Lizotte, D. J., Gunter, L., Laber, E., & Murphy, S. A. (2008). Missing data and uncertainty in batch reinforcement learning. In Neural Information Processing Systems (NIPS).
 
 \skiplinehalf
 
-\noindent [20] Lizotte, D. J., Bowling, M. H., & Murphy, S. A. (2010). Efficient reinforcement learning with multiple reward functions for randomized controlled trial analysis. In Proceedings of the 27th International Conference on Machine Learning (ICML-10) (pp. 695-702).
+\indent Lizotte, D. J., Bowling, M. H., & Murphy, S. A. (2010). Efficient reinforcement learning with multiple reward functions for randomized controlled trial analysis. In Proceedings of the 27th International Conference on Machine Learning (ICML-10) (pp. 695-702).
 
 \skiplinehalf
 
-\noindent [21] Lyerly, A. D., Little, M. O., & Faden, R. (2008). The second wave: Toward responsible inclusion of pregnant women in research. IJFAB: International Journal of Feminist Approaches to Bioethics, 1(2), 5-22.
+\indent Lyerly, A. D., Little, M. O., & Faden, R. (2008). The second wave: Toward responsible inclusion of pregnant women in research. IJFAB: International Journal of Feminist Approaches to Bioethics, 1(2), 5-22.
 
 \skiplinehalf
 
-\noindent [22] McGlynn, Elizabeth A., et al. "The quality of health care delivered to adults in the United States." New England Journal of Medicine 348.26 (2003): 2635-2645.
+\indent McGlynn, Elizabeth A., et al. "The quality of health care delivered to adults in the United States." New England Journal of Medicine 348.26 (2003): 2635-2645.
 
 \skiplinehalf
 
-\noindent [23] Rawls, J., 1999. A Theory of Justice. Cambridge, Mass: Belknap Press of Harvard University Press.
+\indent Rawls, J., 1999. A Theory of Justice. Cambridge, Mass: Belknap Press of Harvard University Press.
 
 \skiplinehalf
 
-\noindent [24] Shrager, J., & Tenenbaum, J. M. (2014). Rapid learning for precision oncology. Nature reviews Clinical oncology, 11(2), 109-118.
+\indent Shrager, J., & Tenenbaum, J. M. (2014). Rapid learning for precision oncology. Nature reviews Clinical oncology, 11(2), 109-118.
 
 \skiplinehalf
 
-\noindent [25] Skinner, J., & Fisher, E. (2010). Reflections on geographic variations in US health care. Dartmouth Institute for Health Policy and Clinical Practice, May, 12, 2013.
+\indent Skinner, J., & Fisher, E. (2010). Reflections on geographic variations in US health care. Dartmouth Institute for Health Policy and Clinical Practice, May, 12, 2013.
 
 \skiplinehalf
 
-\noindent [26] Sutton, R. S., & Barto, A. G. (1998). Reinforcement learning: An introduction (Vol. 1, No. 1). Cambridge: MIT press.
+\indent Sutton, R. S., & Barto, A. G. (1998). Reinforcement learning: An introduction (Vol. 1, No. 1). Cambridge: MIT press.
 
 \skiplinehalf
 
-\noindent [27] Tenenbaum, M., Fern, A., Getoor, L., Littman, M., Manasinghka, V., Natarajan, S., Page, D., Shrager, J., Singer, Y. & Tadepalli, P. (2010, Dec.). Personalized Cancer Therapy via Machine Learning. In Neural Information Processing Systems Foundation Workshop. Lecture conducted from Hilton Whistler, Whistler, BC.
+\indent Tenenbaum, M., Fern, A., Getoor, L., Littman, M., Manasinghka, V., Natarajan, S., Page, D., Shrager, J., Singer, Y. & Tadepalli, P. (2010, Dec.). Personalized Cancer Therapy via Machine Learning. In Neural Information Processing Systems Foundation Workshop. Lecture conducted from Hilton Whistler, Whistler, BC.
 
 \skiplinehalf
 
-\noindent [28] Wendler, D. (2009). “The Ethics of Clinical Research.” The Stanford Encyclopedia of Philosophy. Ed. Edward N. Zalta. N.p., 2012. Web. 10 Dec. 2016
+\indent Wendler, D. (2009). “The Ethics of Clinical Research.” The Stanford Encyclopedia of Philosophy. Ed. Edward N. Zalta. N.p., 2012. Web. 10 Dec. 2016
 
 \skiplinehalf
 
-\noindent [29] Yelon, J. A. (2014). Geriatric trauma and critical care. F. A. Luchette (Ed.). Springer New York.
+\indent Yelon, J. A. (2014). Geriatric trauma and critical care. F. A. Luchette (Ed.). Springer New York.
 
 \skiplinehalf
 
-\noindent [30] Zhao, Y., Kosorok, M. R., & Zeng, D. (2009). Reinforcement learning design for cancer clinical trials. Statistics in medicine, 28(26), 3294-3315.
+\indent Zhao, Y., Kosorok, M. R., & Zeng, D. (2009). Reinforcement learning design for cancer clinical trials. Statistics in medicine, 28(26), 3294-3315.
 
 \end{document}
